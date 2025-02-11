@@ -1,31 +1,35 @@
-// src/services/ai.js
+// src/services/ai.js (with Together AI integration)
 
-const API_KEY = import.meta.env.VITE_OPENROUTER_API_KEY;
-const BASE_URL = import.meta.env.VITE_APP_API_BASE_URL || ''; // Default to empty string if not defined
+import Together from "together-ai";
+
+// Use environment variables for API key.  Vite prefixes env vars with VITE_.
+const apiKey = import.meta.env.VITE_TOGETHER_API_KEY;
+
+// Check if the API key is available
+if (!apiKey) {
+  console.error("VITE_TOGETHER_API_KEY is not set. Please set it in your .env file.");
+  // You might want to throw an error here or handle it gracefully in your UI.
+  throw new Error("API Key not found.  See console for details.");
+}
+
+const together = new Together({
+  apiKey: apiKey,
+});
 
 export const getCompletion = async (prompt) => {
-    if (!API_KEY) {
-        throw new Error("OpenRouter API key is not configured. Please set the VITE_OPENROUTER_API_KEY environment variable.");
-    }
-    const url = `${BASE_URL}/api/chat/completions`;
-
-    const response = await fetch(url, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${API_KEY}`,
-        },
-        body: JSON.stringify({
-            "model": "google/gemini-2.0-flash-thinking-experimental-01-21", //The model name can be found on the OpenRouter website.
-            "messages": [
-                { "role": "user", "content": prompt }
-            ]
-        }),
+  try {
+    const response = await together.chat.completions.create({
+      messages: [{ role: "user", content: prompt }],
+      model: "mistralai/Mistral-7B-Instruct-v0.2", // Corrected model name
     });
 
-    if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+    return response;
+  } catch (error) {
+    console.error("Error in getCompletion:", error);
+    console.error("Error message:", error.message);
+    if (error.cause) {
+      console.error("Error cause:", error.cause);
     }
-
-    return await response.json();
+    throw error; // Re-throw for UI handling
+  }
 };
