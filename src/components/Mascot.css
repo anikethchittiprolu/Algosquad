@@ -1,0 +1,24 @@
+.mascot {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.chick {
+  width: 50px;
+  height: 50px;
+  background-color: yellow;
+  border-radius: 50%;
+  position: relative;
+  animation: bounce 0.5s infinite alternate;
+}
+
+/* Simple bounce animation */
+@keyframes bounce {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(-10px);
+  }
+}
