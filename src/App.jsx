@@ -1,39 +1,48 @@
 import React, { useState, useEffect } from 'react';
 import HomePage from './frontend/pages/HomePage';
 import QuizPage from './frontend/pages/QuizPage';
-import AnswersPage from './frontend/pages/AnswersPage'; // Import AnswersPage
-import AnalyticsPage from './frontend/pages/AnalyticsPage'; // Import AnalyticsPage
-import { getDailyQuestions, saveQuizResults, loadQuizHistory, saveLastQuizDate, getLastQuizDate } from './utils/quizUtils';
+import AnswersPage from './frontend/pages/AnswersPage';
+import AnalyticsPage from './frontend/pages/AnalyticsPage';
+import { getDailyQuestions, saveQuizResults, loadQuizHistory, saveLastQuizDate, getLastQuizDate, getWeakestSubject } from './utils/quizUtils'; // Import getWeakestSubject
 import './index.css';
 
 function App() {
   const [currentPage, setCurrentPage] = useState('home');
   const [quizData, setQuizData] = useState(null);
   const [userAnswers, setUserAnswers] = useState({});
-  const [quizHistory, setQuizHistory] = useState([]);
+  const [quizHistory, setQuizHistory] = useState({});
+  const [selectedSubject, setSelectedSubject] = useState(null);
+  const [weakestSubject, setWeakestSubject] = useState(null); // Add weakestSubject state
 
   useEffect(() => {
     const history = loadQuizHistory();
     setQuizHistory(history);
+    // Find the weakest subject when the app loads
+    setWeakestSubject(getWeakestSubject(history));
   }, []);
 
-  const startQuiz = async () => {
-    const lastQuizDate = getLastQuizDate();
+  const handleSelectSubject = (subject) => {
+    setSelectedSubject(subject);
+    startQuiz(subject);
+  };
+
+  const startQuiz = async (subject) => {
+    const lastQuizDate = getLastQuizDate(subject);
     const today = new Date().toDateString();
 
     if (lastQuizDate !== today) {
       try {
-        const questions = await getDailyQuestions();
+        const questions = await getDailyQuestions(subject);
         setQuizData({ questions, score: 0 });
         setUserAnswers({});
         setCurrentPage('quiz');
-        saveLastQuizDate(today);
+        saveLastQuizDate(today, subject);
       } catch (error) {
         console.error("Error fetching quiz:", error);
         setQuizData({ questions: [], score: 0 });
       }
     } else {
-      const questions = await getDailyQuestions();
+      const questions = await getDailyQuestions(subject);
       setQuizData({ questions, score: 0 });
       setUserAnswers({});
       setCurrentPage('quiz');
@@ -60,32 +69,51 @@ function App() {
       questions: updatedQuestions,
     };
 
-    saveQuizResults(quizResults);
-    setQuizHistory([...quizHistory, quizResults]);
+    saveQuizResults(quizResults, selectedSubject);
+    setQuizHistory((prevHistory) => {
+        const updatedHistory = {
+          ...prevHistory,
+          [selectedSubject]: [...(prevHistory[selectedSubject] || []), quizResults],
+        };
+        // Update weakestSubject whenever quiz history changes
+        setWeakestSubject(getWeakestSubject(updatedHistory));
+        return updatedHistory;
+      });
     setQuizData({ ...quizData, score: score, questions: updatedQuestions });
     setUserAnswers(answers);
-    setCurrentPage('answers'); // Navigate to AnswersPage
+    setCurrentPage('answers');
   };
 
   const goToAnalytics = () => {
     setCurrentPage('analytics');
   };
 
-    const goHome = () => {
-        setCurrentPage('home');
-    };
+  const goHome = () => {
+    setCurrentPage('home');
+    setSelectedSubject(null);
+  };
 
   return (
     <>
-      {currentPage === 'home' && <HomePage onStartQuiz={startQuiz} />}
+      {currentPage === 'home' && (
+        <HomePage
+          onSelectSubject={handleSelectSubject}
+          weakestSubject={weakestSubject} // Pass weakestSubject
+        />
+      )}
       {currentPage === 'quiz' && (
         <QuizPage questions={quizData ? quizData.questions : []} onSubmitQuiz={submitQuiz} />
       )}
       {currentPage === 'answers' && (
-        <AnswersPage quizData={quizData} userAnswers={userAnswers} onGoToAnalytics={goToAnalytics} />
+        <AnswersPage
+          quizData={quizData}
+          userAnswers={userAnswers}
+          onGoToAnalytics={goToAnalytics}
+          selectedSubject={selectedSubject}
+        />
       )}
       {currentPage === 'analytics' && (
-        <AnalyticsPage quizHistory={quizHistory} onGoHome={goHome} />
+        <AnalyticsPage quizHistory={quizHistory[selectedSubject] || []} onGoHome={goHome} selectedSubject={selectedSubject}/>
       )}
     </>
   );

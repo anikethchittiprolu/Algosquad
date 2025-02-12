@@ -1,15 +1,15 @@
 import React from 'react';
-import './AnswersPage.css'; // Import the CSS
+import './AnswersPage.css';
 import Mascot from '../components/Mascot';
 
-const AnswersPage = ({ quizData, userAnswers, onGoToAnalytics }) => {
+const AnswersPage = ({ quizData, userAnswers, onGoToAnalytics, selectedSubject }) => {
   if (!quizData) {
     return <div>Loading...</div>;
   }
 
   return (
     <div className="container answers-container">
-      <h2>Quiz Results</h2>
+      <h2>Quiz Results ({selectedSubject})</h2> {/* Display selected subject */}
       <Mascot message={`You scored ${quizData.score} / ${quizData.questions.length}!`} />
       <p>Your Score: {quizData.score} / {quizData.questions.length}</p>
 
