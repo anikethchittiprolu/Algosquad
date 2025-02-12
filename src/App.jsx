@@ -1,51 +1,93 @@
-import React, { useState } from 'react';
-import Mascot from './components/Mascot';
-import Quiz from './components/Quiz';
-import { getCompletion } from './services/ai';
+import React, { useState, useEffect } from 'react';
+import HomePage from './frontend/pages/HomePage';
+import QuizPage from './frontend/pages/QuizPage';
+import AnswersPage from './frontend/pages/AnswersPage'; // Import AnswersPage
+import AnalyticsPage from './frontend/pages/AnalyticsPage'; // Import AnalyticsPage
+import { getDailyQuestions, saveQuizResults, loadQuizHistory, saveLastQuizDate, getLastQuizDate } from './utils/quizUtils';
+import './index.css';
 
 function App() {
-  const [aiResponse, setAiResponse] = useState('');
+  const [currentPage, setCurrentPage] = useState('home');
+  const [quizData, setQuizData] = useState(null);
+  const [userAnswers, setUserAnswers] = useState({});
+  const [quizHistory, setQuizHistory] = useState([]);
 
-  // Mock AI for development
-  const mockAI = async (prompt) => {
-    console.log("Mock AI received prompt:", prompt);
-    return {
-      choices: [{
-        message: {
-          role: "assistant",
-          content: "This is a mock AI response to: " + prompt
-        }
-      }]
-    };
-  };
+  useEffect(() => {
+    const history = loadQuizHistory();
+    setQuizHistory(history);
+  }, []);
 
-  const callAI = async (prompt) => {
-    try {
-      const useMockAI = import.meta.env.VITE_APP_MOCK_AI === 'true';
-      const completion = useMockAI ? await mockAI(prompt) : await getCompletion(prompt);
-      setAiResponse(completion.choices[0].message.content);
-    } catch (error) {
-      console.error("Error calling AI:", error);
-      setAiResponse("Sorry, I couldn't process that. Error: " + error.message);
+  const startQuiz = async () => {
+    const lastQuizDate = getLastQuizDate();
+    const today = new Date().toDateString();
+
+    if (lastQuizDate !== today) {
+      try {
+        const questions = await getDailyQuestions();
+        setQuizData({ questions, score: 0 });
+        setUserAnswers({});
+        setCurrentPage('quiz');
+        saveLastQuizDate(today);
+      } catch (error) {
+        console.error("Error fetching quiz:", error);
+        setQuizData({ questions: [], score: 0 });
+      }
+    } else {
+      const questions = await getDailyQuestions();
+      setQuizData({ questions, score: 0 });
+      setUserAnswers({});
+      setCurrentPage('quiz');
     }
   };
 
-  const handleExample = async () => {
-    const examplePrompt = "Generate a short quiz question about the solar system.";
-    await callAI(examplePrompt);
+  const submitQuiz = (answers) => {
+    let score = 0;
+    const updatedQuestions = quizData.questions.map((question) => {
+      const isCorrect = answers[question.id] === question.correctAnswer;
+      if (isCorrect) {
+        score++;
+      }
+      return {
+        ...question,
+        isCorrect: isCorrect,
+      };
+    });
+
+    const quizResults = {
+      date: new Date().toDateString(),
+      score: score,
+      answers: answers,
+      questions: updatedQuestions,
+    };
+
+    saveQuizResults(quizResults);
+    setQuizHistory([...quizHistory, quizResults]);
+    setQuizData({ ...quizData, score: score, questions: updatedQuestions });
+    setUserAnswers(answers);
+    setCurrentPage('answers'); // Navigate to AnswersPage
   };
 
+  const goToAnalytics = () => {
+    setCurrentPage('analytics');
+  };
+
+    const goHome = () => {
+        setCurrentPage('home');
+    };
+
   return (
-    <div className="container">
-      <h1>AI Learning Platform</h1>
-      <Mascot />
-      <h2>Quiz</h2>
-      <div className="quiz-placeholder">
-        Quiz questions and answers will appear here.
-      </div>
-      <button onClick={handleExample}>Test AI</button>
-      {aiResponse && <div className="ai-response">AI Response: {aiResponse}</div>}
-    </div>
+    <>
+      {currentPage === 'home' && <HomePage onStartQuiz={startQuiz} />}
+      {currentPage === 'quiz' && (
+        <QuizPage questions={quizData ? quizData.questions : []} onSubmitQuiz={submitQuiz} />
+      )}
+      {currentPage === 'answers' && (
+        <AnswersPage quizData={quizData} userAnswers={userAnswers} onGoToAnalytics={goToAnalytics} />
+      )}
+      {currentPage === 'analytics' && (
+        <AnalyticsPage quizHistory={quizHistory} onGoHome={goHome} />
+      )}
+    </>
   );
 }
 

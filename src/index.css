@@ -1,11 +1,10 @@
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* More readable font */
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background-color: #f0f0f0;
+  background: linear-gradient(to bottom, #1a2a6c, #6a3093, #a044ff);
+  color: white;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -14,56 +13,68 @@ body {
 
 #root {
   width: 100%;
-  max-width: 800px; /* Adjust as needed */
-  padding: 20px;
-  background-color: white;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  border-radius: 8px;
+  max-width: 800px;
+  padding: 30px; /* Increased padding */
+  background-color: rgba(255, 255, 255, 0.15); /* Slightly more opaque */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* More pronounced shadow */
+  border-radius: 12px; /* Larger border radius */
 }
 
 .container {
   text-align: center;
 }
 
-h1 {
-  color: #333;
+h1, h2 {
+  color: white;
+  margin-bottom: 20px; /* Consistent spacing */
 }
 
-h2 {
-  color: #555;
-  margin-top: 30px;
+h3 {
+    color: #ddd;
+    margin-top: 30px;
+    margin-bottom: 15px;
 }
 
-.quiz-placeholder {
-  border: 1px dashed #ccc;
-  padding: 20px;
-  margin-top: 10px;
-  color: #888;
+button {
+  background-color: #a044ff;
+  border: none;
+  color: white;
+  padding: 12px 24px; /* Larger padding */
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin-top: 15px; /* Consistent spacing */
+  cursor: pointer;
+  border-radius: 25px; /* Rounded buttons */
+  transition: background-color 0.3s ease, transform 0.2s ease; /* Smoother transitions */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+button:hover {
+  background-color: #6a3093;
+  transform: translateY(-2px); /* Slight lift on hover */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3); /* Enhanced shadow on hover */
+}
+
+button:active {
+  transform: translateY(0); /* Reset transform on click */
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2); /* Reduced shadow on click */
 }
 
 .ai-response {
   margin-top: 20px;
   padding: 10px;
   border: 1px solid #ddd;
-  background-color: #f9f9f9;
+  background-color: rgba(255,255,255, 0.2);
   border-radius: 4px;
   font-style: italic;
-}
-
-button {
-  background-color: #4CAF50; /* Green */
-  border: none;
   color: white;
-  padding: 10px 20px;
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
-  font-size: 16px;
-  margin-top: 10px;
-  cursor: pointer;
-  border-radius: 4px;
 }
 
-button:hover {
-  background-color: #3e8e41;
+/* Quiz Page Specific Styles */
+.quiz-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }

@@ -1,0 +1,29 @@
+.analytics-page-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Center content horizontally */
+  }
+
+  .quiz-history-list {
+    list-style: none;
+    padding: 0;
+    width: 80%;
+  }
+
+  .history-item {
+    background-color: rgba(255, 255, 255, 0.2);
+    padding: 10px;
+    margin-bottom: 5px;
+    border-radius: 4px;
+    text-align: left;
+  }
+
+  .analytics-section, .feedback-section {
+    background-color: rgba(255, 255, 255, 0.2);
+    padding: 15px;
+    margin-bottom: 20px;
+    border-radius: 8px;
+    width: 80%; /* Control the width */
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    text-align: left;
+  }

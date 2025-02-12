@@ -1,0 +1,74 @@
+.question-container {
+    background-color: rgba(255, 255, 255, 0.2);
+    padding: 15px;
+    margin-bottom: 20px;
+    border-radius: 8px;
+    width: 90%; /* Control the width */
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  }
+
+  .question-text {
+    font-size: 1.1em;
+    margin-bottom: 10px;
+    color: #eee;
+  }
+
+  .options-container {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .option {
+    padding: 8px 12px;
+    margin-bottom: 5px;
+    border-radius: 20px; /* Rounded options */
+    background-color: rgba(255,255,255,0.1);
+    transition: background-color 0.3s ease;
+    cursor: pointer;
+  }
+
+  .option:hover {
+    background-color: rgba(255,255,255,0.3);
+  }
+
+  .option input[type="radio"] {
+    margin-right: 10px;
+    cursor: pointer;
+  }
+  .option-text{
+    color: white;
+  }
+
+  .fill-in-blank-input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 20px; /* Rounded input */
+    background-color: #fff;
+    color: #333;
+    margin-bottom: 10px;
+    font-size: 1em;
+  }
+
+  .hint-button {
+    /* Use the same styles as the main button, but potentially with a different color */
+    background-color: #4CAF50; /* Green color, for example */
+    border: none;
+    color: white;
+    padding: 8px 16px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 14px;
+    margin-top: 10px;
+    cursor: pointer;
+    border-radius: 20px;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  }
+
+  .hint-button:hover {
+    background-color: #3e8e41; /* Darker green */
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  }
