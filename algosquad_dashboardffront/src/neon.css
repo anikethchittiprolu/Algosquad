@@ -1,0 +1,57 @@
+@keyframes rotate-slow {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+  
+  @keyframes rotate-medium {
+    from { transform: rotate(360deg); }
+    to { transform: rotate(0deg); }
+  }
+  
+  @keyframes rotate-fast {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+  
+  .animate-rotate-slow {
+    animation: rotate-slow 10s linear infinite;
+  }
+  
+  .animate-rotate-medium {
+    animation: rotate-medium 6s linear infinite;
+  }
+  
+  .animate-rotate-fast {
+    animation: rotate-fast 4s linear infinite;
+  }
+  
+  @keyframes float {
+    0% { transform: translateY(0px); }
+    50% { transform: translateY(-10px); }
+    100% { transform: translateY(0px); }
+  }
+  
+  @keyframes gradient-x {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+  
+  @keyframes pulse-glow {
+    0% { opacity: 0.4; }
+    50% { opacity: 1; }
+    100% { opacity: 0.4; }
+  }
+  
+  .animate-float {
+    animation: float 3s ease-in-out infinite;
+  }
+  
+  .animate-gradient-x {
+    background-size: 200% auto;
+    animation: gradient-x 5s linear infinite;
+  }
+  
+  .animate-pulse-glow {
+    animation: pulse-glow 2s ease-in-out infinite;
+  }
